@@ -11,14 +11,10 @@ int main(int argc, char const *argv[])
 {
 	Cell cell[81];
 	Grid grid(cell);
-	// Group block[9];
-	// Group row[9];
-	// Group col[9];
-	// Stack stack;
+	// Gr block[9], row[9], col[9];
 
 	grid.initCells();
 
-	// char fileName[] = argv[1];
 	try
 	{
 		grid.initGrid(argv[1]);
@@ -37,8 +33,6 @@ int main(int argc, char const *argv[])
 	do
 	{
 		complete = true;
-		// change = false;
-		// std::cout << "Iteration " << iter << std::endl;
 		for (int i = 0; i < 81; ++i)
 		{	
 			if (cell[i].value == 0)
@@ -48,11 +42,6 @@ int main(int argc, char const *argv[])
 			}
 		}
 		++iter;
-		// std::cout << ++iter << std::endl;
-		// grid.printGrid(1);
-		// grid.printGroup(0,1);
-		// grid.printGroup(1,1);
-		// grid.printGroup(2,1);
 	} while (!complete && iter < 100);
 
 	std::cout << "End grid after " << iter << " iterations" << std::endl;
@@ -63,18 +52,6 @@ int main(int argc, char const *argv[])
 
 	return 0;
 }
-
-Grid::Grid(Cell cell[81])
-{
-	this-> cell = cell;	
-	for (int i = 0; i < 81; ++i)
-	{
-		b[i] = false;
-		r[i] = false;
-		c[i] = false;
-	}
-	return;
-};
 
 void Grid::initCells()
 {
@@ -107,7 +84,6 @@ void Grid::initGrid(char const* fileName)
     else
     {
     	throw "Error opening file!";
-		// std::cout << "Error opening file!\n";
     }
     return;
 }
@@ -143,7 +119,7 @@ void Grid::printGrid(int type)
 		}
 		if ((i+1)%3==0)
 		{
-			std::cout << "\n------|-------|-------|";
+			std::cout << "\n------+-------+-------+";
 		}
 		std::cout << "\n";
 	}		
@@ -202,23 +178,18 @@ void Cell::update()
 	{	
 		if (!block[i] && !row[i] && !col[i])
 		{
+			// std::cout << "Reach 1";
 			poss[nposs] = i+1;
 			++nposs;
 		}
 	};
 	if (nposs == 1)
 	{
-		std::cout << "Set cell value!\n";
 		write(poss[0]);
 		return;
 	}
 	return;
 }
-
-// void Grid::insuff()
-// {
-
-// }
 
 void Cell::write(int val)
 {
@@ -226,6 +197,7 @@ void Cell::write(int val)
 	{
 		throw "Value not in allowed range!\n";
 	}
+		std::cout << "Set cell value!" << val << "\n";
 	value = val;
 	if (val!=0)
 	{
@@ -238,7 +210,6 @@ void Cell::write(int val)
 
 void Cell::clear()
 {
-
 		nposs = 0;
 		for (int i = 0; i < 9; ++i)
 		{
@@ -246,13 +217,27 @@ void Cell::clear()
 		}
 }
 
-// void Stack::push(Cell cell)
-// {
-// 	this-> cell[n][81] = cell;
-// 	++n;
-// }
-
-// Cell Stack::pop()
-// {
-// 	return cell[n--][81];
-// }
+void Grid::insuff(int block, int row, int col)
+{
+	int count[9] = {0,0,0,0,0,0,0,0,0};
+	for (int i = 0; i < 9; ++i)
+	{
+		for (int j = 0; j < 9; ++j)
+		{
+			for (int k = 0; k < 9; ++k)
+			{
+				if(cell[block*((((i/9)/3) + (i%9)/3)) + row*(i+j*9)].nposs = k)
+				{
+					++count[k];
+				}
+			}
+		}
+	}
+	for (int k = 0; k < 9; ++k)
+	{
+		if (count[k] == k)
+		{
+			
+		}
+	}
+}

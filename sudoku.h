@@ -16,10 +16,35 @@ public:
 	void clear();
 };
 
+// class Gr
+// {
+// public:
+// 	Gr()
+// 	{
+// 		for (int i = 0; i < 9; ++i)
+// 		{
+// 			has[i] = false;
+// 		}
+// 	};
+// 	~Gr(){};
+	
+// 	Cell cell[9];
+// 	bool has[9];	
+// };
+
 class Grid
 {
 public:
-	Grid(Cell cell[81]);
+	Grid(Cell cell[81])
+	{
+		this-> cell = cell;	
+		for (int i = 0; i < 81; ++i)
+		{
+			b[i] = false;
+			r[i] = false;
+			c[i] = false;
+		}
+	};
 	~Grid(){};
 
 	Cell* cell;
@@ -32,28 +57,6 @@ public:
 	void printGroup(int type, int check);
 	void initCells();
 	void initGrid(char const* fileName);
-	void insuff();
+	void insuff(int block, int row, int col);
 };
 
-// class Group
-// {
-// public:
-// 	Group(): fill(0) {};
-// 	~Group(){};
-	
-// 	Cell* cell[9];
-// 	int fill;
-// };
-
-// class Stack
-// {
-// public:
-// 	Stack(): n(0) {};
-// 	~Stack(){};
-
-// 	int n;
-// 	Cell cell[100][81];
-	
-// 	void push(Cell cell);
-// 	Cell pop();
-// };
