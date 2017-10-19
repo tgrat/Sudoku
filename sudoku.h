@@ -1,20 +1,4 @@
-class Cell;
-
-class Grid
-{
-public:
-	Grid();
-	~Grid();
-
-	Cell cell[81];
-	bool block[81];
-	bool row[81];
-	bool col[81];
-
-	void printGrid();
-};
-
-class Cell: public Grid
+class Cell
 {
 public:
 	Cell();
@@ -22,12 +6,27 @@ public:
 	~Cell();
 
 	int value;
-	// bool* block;
-	// bool* row;
-	// bool* col;
+	bool* block;
+	bool* row;
+	bool* col;
 
 	void write(int val);
 };
+
+class Grid
+{
+public:
+	Grid(Cell c[]): cell(c) {};
+	~Grid();
+
+	bool block[81];
+	bool row[81];
+	bool col[81];
+
+	void printGrid();
+};
+
+
 
 
 
