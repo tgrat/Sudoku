@@ -2,7 +2,7 @@
 #include <cmath>
 #include <stdio.h>
 #include <fstream>
-// #include <string>
+#include <iomanip>
 
 #include "sudoku.h"
 
@@ -11,38 +11,57 @@ int main(int argc, char const *argv[])
 {
 	Cell cell[81];
 	Grid grid(cell);
+	// Group block[9];
+	// Group row[9];
+	// Group col[9];
+	// Stack stack;
 
 	grid.initCells();
 
-	char fileName[] = "test1";
-	grid.initGrid(fileName);
+	// char fileName[] = argv[1];
+	try
+	{
+		grid.initGrid(argv[1]);
+	}
+	catch(char const* msg)
+	{
+		std::cout << msg << std::endl;
+		return 1;
+	}
 	std::cout << "Initial Grid:\n";
-	grid.printGrid();
+	grid.printGrid(0);
 
 	int iter = 0;
 	bool change;
+	bool complete;
 	do
 	{
-		change = false;
+		complete = true;
+		// change = false;
 		// std::cout << "Iteration " << iter << std::endl;
 		for (int i = 0; i < 81; ++i)
 		{	
 			if (cell[i].value == 0)
 			{
-				change = cell[i].update();
+				complete = false;
+				cell[i].update();
 			}
 		}
-		std::cout << ++iter << std::endl;
-		grid.printGrid();
-		grid.printGroup(0,1);
-		grid.printGroup(1,1);
-		grid.printGroup(2,1);
-	} while (change);
+		++iter;
+		// std::cout << ++iter << std::endl;
+		// grid.printGrid(1);
+		// grid.printGroup(0,1);
+		// grid.printGroup(1,1);
+		// grid.printGroup(2,1);
+	} while (!complete && iter < 100);
 
-	std::cout << iter << std::endl;
-	grid.printGrid();
+	std::cout << "End grid after " << iter << " iterations" << std::endl;
+	
+	grid.printGrid(0);
+	grid.printGrid(1);
+	grid.printGrid(2);
 
-
+	return 0;
 }
 
 Grid::Grid(Cell cell[81])
@@ -54,6 +73,7 @@ Grid::Grid(Cell cell[81])
 		r[i] = false;
 		c[i] = false;
 	}
+	return;
 };
 
 void Grid::initCells()
@@ -65,12 +85,14 @@ void Grid::initCells()
 		cell[i].row = &r[(i/9)*9];
 		cell[i].block = &b[(((i/9)/3)*3 + (i%9)/3)*9];
 	}
+	return;
 }
 
-void Grid::initGrid(char* fileName)
+void Grid::initGrid(char const* fileName)
 {
 	std::ifstream file(fileName);
-    while (file)
+    // while (file)
+
     if(file.is_open())
     {
 		char c;
@@ -84,30 +106,49 @@ void Grid::initGrid(char* fileName)
     }
     else
     {
-		std::cout << "Error opening file!";
+    	throw "Error opening file!";
+		// std::cout << "Error opening file!\n";
     }
+    return;
 }
 
-void Grid::printGrid()
+void Grid::printGrid(int type)
 {
 	for (int i = 0; i < 9; ++i)
 	{
 		for (int j = 0; j < 9; ++j)
 		{
-			// std::cout << i*9+j << " ";
-			std::cout << cell[i*9+j].value << " ";
+			switch (type)
+			{
+				case 0:
+					std::cout << cell[i*9+j].value << " ";
+					break;
+				case 1:
+					std::cout << cell[i*9+j].nposs << " ";
+					break;
+				case 2:
+					// std::cout << std::left <<std::setw(6) << "0";
+					for (int k = 0; k < 9; ++k)
+					{
+						std::cout << cell[i*9+j].poss[k];
+					}
+					std::cout << " ";
+					break;
+
+			}
 			if ((j+1)%3==0)
 			{
-				std::cout << "|";
+				std::cout << "| ";
 			}
 		}
 		if ((i+1)%3==0)
 		{
-			std::cout << "\n------|------|------|";
+			std::cout << "\n------|-------|-------|";
 		}
 		std::cout << "\n";
 	}		
 	std::cout << "\n";
+	return;
 }
 
 void Grid::printGroup(int type, int check)
@@ -151,30 +192,40 @@ void Grid::printGroup(int type, int check)
 			std::cout << std::endl;
 		}
 	}
+	return;
 }
 
-bool Cell::update()
+void Cell::update()
 {	
-	int is;
-	int poss = 0;
+	clear();
 	for (int i = 0; i < 9; ++i)
 	{	
 		if (!block[i] && !row[i] && !col[i])
 		{
-			++poss;
-			is = i;
+			poss[nposs] = i+1;
+			++nposs;
 		}
 	};
-	if (poss == 1)
+	if (nposs == 1)
 	{
-		write(is+1);
-		return true;
+		std::cout << "Set cell value!\n";
+		write(poss[0]);
+		return;
 	}
-	return false;
+	return;
 }
+
+// void Grid::insuff()
+// {
+
+// }
 
 void Cell::write(int val)
 {
+	if (val < 0 || val > 9)
+	{
+		throw "Value not in allowed range!\n";
+	}
 	value = val;
 	if (val!=0)
 	{
@@ -184,3 +235,24 @@ void Cell::write(int val)
 	}
 	return;
 }
+
+void Cell::clear()
+{
+
+		nposs = 0;
+		for (int i = 0; i < 9; ++i)
+		{
+			poss[i] = 0;
+		}
+}
+
+// void Stack::push(Cell cell)
+// {
+// 	this-> cell[n][81] = cell;
+// 	++n;
+// }
+
+// Cell Stack::pop()
+// {
+// 	return cell[n--][81];
+// }
