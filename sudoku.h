@@ -1,10 +1,14 @@
+
+
 class Cell
 {
 public:
-	int value = 0;
-	int blockID;
-	int rowID;
-	int colID;
+	Cell(bool* b, bool* r, bool* c): value(0) {};
+	~Cell();
+	int value;
+	int* block;
+	int* row;
+	int* col;
 };
 
 class Group
