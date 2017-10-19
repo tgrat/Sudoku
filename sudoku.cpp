@@ -8,16 +8,19 @@
 
 int main(int argc, char const *argv[])
 {
-	Cell cell[81];
-	Group block[9];
-	Group row[9];
-	Group col[9];
-	initCells(cell);
+	Grid grid;
+	// Cell cell[81];
+	// bool block[81];
+	// bool row[81];
+	// bool col[81];
+
+	initCells(grid.cell,block,row,col);
 
 	char fileName[] = "test1";
-	initGrid(fileName,cell,block,row,col);
+
+	initGrid(fileName,grid.cell);
 	std::cout << "Initial Grid:\n";
-	printGrid(cell);
+	grid.printGrid();
 
 	// printBlock(block,2);
 
@@ -28,9 +31,9 @@ int main(int argc, char const *argv[])
 		// std::cout << "Iteration " << iter << std::endl;
 		for (int i = 0; i < 81; ++i)
 		{	
-			if (cell[i].value == 0)
+			if (grid.cell[i].value == 0)
 			{
-				change = updateCell(cell[i],block,row,col);
+				change = grid.cell.updateCell();
 			}
 		}
 		++iter;
@@ -41,28 +44,28 @@ int main(int argc, char const *argv[])
 
 }
 
-void initCells(Cell cell[])
+void initCells(Cell cell[], bool block[], bool row[], bool col[])
 {
 
 	for (int i = 0; i < 81; ++i)
 	{
-		cell[i].colID = i%9;
-		cell[i].rowID = i/9;
-		cell[i].blockID = ((i/9)/3)*3 + (i%9)/3;
+		cell[i].col = &col[(i%9)*9];
+		cell[i].row = &row[(i/9)*9];
+		cell[i].block = &block[(((i/9)/3)*3 + (i%9)/3)*9];
 	}
 }
 
-void initGrid(Cell cell[])
-{
-	for (int i = 0; i < 81; ++i)
-	{
-		printf("Row %i, Column %i\n",cell[i].rowID,cell[i].colID);
-		std::cin.get() >> cell[i].value;
+// void initGrid(Cell cell[])
+// {
+// 	for (int i = 0; i < 81; ++i)
+// 	{
+// 		printf("Row %i, Column %i\n",cell[i].rowID,cell[i].colID);
+// 		std::cin.get() >> cell[i].value;
 		
-	}
-}
+// 	}
+// }
 
-void initGrid(char fileName[], Cell cell[], Group block[], Group row[], Group col[])
+void initGrid(char fileName[], Cell cell[])
 {
 	std::ifstream file(fileName);
     while (file)
@@ -72,13 +75,13 @@ void initGrid(char fileName[], Cell cell[], Group block[], Group row[], Group co
 		int i = 0;
 		while (file.get(c))
 		{
-			cell[i].value = c - '0';
+			cell[i].write(int(c-'0'));
 			if (cell[i].value != 0)
-			{	
-				block[cell[i].blockID].has[cell[i].value-1] = true;
-				row[cell[i].rowID].has[cell[i].value-1] = true;
-				col[cell[i].colID].has[cell[i].value-1] = true;
-			}
+			// {	
+			// 	block[cell[i].blockID].has[cell[i].value-1] = true;
+			// 	row[cell[i].rowID].has[cell[i].value-1] = true;
+			// 	col[cell[i].colID].has[cell[i].value-1] = true;
+			// }
 			++i;
 		}
 			
@@ -89,7 +92,7 @@ void initGrid(char fileName[], Cell cell[], Group block[], Group row[], Group co
     }
 }
 
-void printGrid(Cell cell[])
+void Grid::printGrid()
 {
 	for (int i = 0; i < 9; ++i)
 	{
@@ -140,11 +143,30 @@ bool updateCell(Cell &cell,Group block[], Group row[], Group col[])
 	if (poss == 1)
 	{
 		// std::cout << "Cell is defined\n";
-		cell.value = is + 1;
-		block[cell.blockID].has[cell.value-1] = true;
-		row[cell.rowID].has[cell.value-1] = true;
-		col[cell.colID].has[cell.value-1] = true;
+		cell.write(is+1);
 		return true;
 	}
 	return false;
+}
+
+void Cell::write(int val)
+{
+	value = val;
+	if (val!=0)
+	{
+		row[val-1] = true;
+		col[val-1] = true;
+		block[val-1] = true;
+	}
+	return;
+}
+
+Grid::Grid()
+{
+	for (int i = 0; i < 81; ++i)
+	{
+		block[i] = false;
+		row[i] = false;
+		col[i] - false;
+	};
 }
