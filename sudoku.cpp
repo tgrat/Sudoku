@@ -2,9 +2,9 @@
 #include <cmath>
 #include <stdio.h>
 #include <fstream>
+// #include <string>
 
-#include "cell.h"
-#include "grid.h"
+#include "sudoku.h"
 
 
 int main(int argc, char const *argv[])
@@ -19,27 +19,42 @@ int main(int argc, char const *argv[])
 	std::cout << "Initial Grid:\n";
 	grid.printGrid();
 
-	grid.printBlock(block,2);
+	int iter = 0;
+	bool change;
+	do
+	{
+		change = false;
+		// std::cout << "Iteration " << iter << std::endl;
+		for (int i = 0; i < 81; ++i)
+		{	
+			if (cell[i].value == 0)
+			{
+				change = cell[i].update();
+			}
+		}
+		std::cout << ++iter << std::endl;
+		grid.printGrid();
+		grid.printGroup(0,1);
+		grid.printGroup(1,1);
+		grid.printGroup(2,1);
+	} while (change);
 
-	// int iter = 1;
-	// bool change;
-	// do
-	// {
-	// 	// std::cout << "Iteration " << iter << std::endl;
-	// 	for (int i = 0; i < 81; ++i)
-	// 	{	
-	// 		if (grid.cell[i].value == 0)
-	// 		{
-	// 			change = grid.cell.updateCell();
-	// 		}
-	// 	}
-	// 	++iter;
-	// } while (change);
-
-	// printGrid(cell);
+	std::cout << iter << std::endl;
+	grid.printGrid();
 
 
 }
+
+Grid::Grid(Cell cell[81])
+{
+	this-> cell = cell;	
+	for (int i = 0; i < 81; ++i)
+	{
+		b[i] = false;
+		r[i] = false;
+		c[i] = false;
+	}
+};
 
 void Grid::initCells()
 {
@@ -51,16 +66,6 @@ void Grid::initCells()
 		cell[i].block = &b[(((i/9)/3)*3 + (i%9)/3)*9];
 	}
 }
-
-// void initGrid(Cell cell[])
-// {
-// 	for (int i = 0; i < 81; ++i)
-// 	{
-// 		printf("Row %i, Column %i\n",cell[i].rowID,cell[i].colID);
-// 		std::cin.get() >> cell[i].value;
-		
-// 	}
-// }
 
 void Grid::initGrid(char* fileName)
 {
@@ -105,40 +110,68 @@ void Grid::printGrid()
 	std::cout << "\n";
 }
 
-void Grid::printBlock(int check)
+void Grid::printGroup(int type, int check)
 {
-	std::cout << "Testing blocks for " << check << std::endl;
-	for (int i = 0; i < 3; ++i)
+	switch(type)
 	{
-		for (int j = 0; j < 3; ++j)
+		case 0:
+			std::cout << "Testing blocks for " << check << std::endl;
+			break;
+		case 1:
+			std::cout << "Testing rows for " << check << std::endl;
+			break;
+		case 2:
+			std::cout << "Testing columns for " << check << std::endl;
+			break;
+	}
+	for (int i = 0; i < 81; ++i)
+	{
+		switch (type)
 		{
-			std::cout << test[i*3+j].has[check-1] << " ";
-			
+			case 0: 
+				std::cout << cell[i].block[check-1];
+				break;
+			case 1:
+				std::cout << cell[i].row[check-1];
+				break;
+			case 2:
+				std::cout << cell[i].col[check-1];
+				break;
 		}
-		std::cout << "\n";
+		if ((i+1)%3 == 0)
+		{
+			std::cout << "|";
+		}
+		if ((i+1)%27 == 0)
+		{
+			std::cout << "\n---+---+---";
+		}
+		if ((i+1)%9 == 0)
+		{
+			std::cout << std::endl;
+		}
 	}
 }
 
-// bool updateCell(Cell &cell,Group block[], Group row[], Group col[])
-// {
-// 	int poss = 0;
-// 	int is = 0;
-// 	for (int i = 0; i < 9; ++i)
-// 	{	
-// 		if (!block[cell.blockID].has[i] && !row[cell.rowID].has[i] && !col[cell.colID].has[i])
-// 		{
-// 			++poss;
-// 			is = i;
-// 		}
-// 	};
-// 	if (poss == 1)
-// 	{
-// 		// std::cout << "Cell is defined\n";
-// 		cell.write(is+1);
-// 		return true;
-// 	}
-// 	return false;
-// }
+bool Cell::update()
+{	
+	int is;
+	int poss = 0;
+	for (int i = 0; i < 9; ++i)
+	{	
+		if (!block[i] && !row[i] && !col[i])
+		{
+			++poss;
+			is = i;
+		}
+	};
+	if (poss == 1)
+	{
+		write(is+1);
+		return true;
+	}
+	return false;
+}
 
 void Cell::write(int val)
 {

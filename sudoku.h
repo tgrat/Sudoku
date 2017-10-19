@@ -1,9 +1,8 @@
 class Cell
 {
 public:
-	Cell();
-	Cell(bool* b, bool* r, bool* c): value(0) {};
-	~Cell();
+	Cell(){};
+	~Cell(){};
 
 	int value;
 	bool* block;
@@ -11,36 +10,23 @@ public:
 	bool* col;
 
 	void write(int val);
+	bool update();
 };
 
 class Grid
 {
 public:
-	Grid(Cell c[]): cell(c) {};
-	~Grid();
+	Grid(Cell cell[81]);
+	~Grid(){};
 
-	bool block[81];
-	bool row[81];
-	bool col[81];
+	Cell* cell;
+	bool b[81];
+	bool r[81];
+	bool c[81];
 
 	void printGrid();
+	void printGrid(bool poss);
+	void printGroup(int type, int check);
+	void initCells();
+	void initGrid(char* fileName);
 };
-
-
-
-
-
-
-class Group
-{
-public:
-	bool has[9] = {false,false,false,false,false,false,false,false,false};
-};
-
-
-void initCells(Cell cell[], bool block[], bool row[], bool col[]);
-
-	// void initGrid(Cell cell[]);
-	void initGrid(char fileName[], Cell cell[]);
-	// void printGrid(Cell cell[]);
-	// void printBlock(Group test[], int check);
